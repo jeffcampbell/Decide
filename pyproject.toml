@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "decide"
+version = "0.1.0"
+description = "Typed decisions about files and text via System One decision models (Jev, clef)"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+decide = "decide.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
