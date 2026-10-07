@@ -8,7 +8,7 @@ or above --threshold are printed, highest first, one per line:
 Examples:
     decide triage -q "Does this code refresh OAuth tokens?" src/
     decide triage -q "Handles payments?" -q "Writes to the database?" --match all .
-    decide triage -q "Parses CSV input?" --glob '*.py' --dry-run ~/development/finance
+    decide triage -q "Parses CSV input?" --glob '*.py' --dry-run ../other-project
 """
 from __future__ import annotations
 

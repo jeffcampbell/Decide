@@ -32,6 +32,31 @@ class FakeClient:
         return Response(answers, len(state) // 4, 0.01)
 
 
+class ConfigTest(unittest.TestCase):
+    def test_key_file_location(self):
+        from decide import config
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {}, clear=True):
+            os.environ["XDG_CONFIG_HOME"] = tmp
+            self.assertEqual(config.env_file(), Path(tmp) / "decide" / "env")
+            (Path(tmp) / "decide").mkdir()
+            (Path(tmp) / "decide" / "env").write_text("# keys\nexport TYPESAFE_API_KEY='abc'\n")
+            self.assertEqual(config.get_backend("jev").api_key, "abc")
+            os.environ["DECIDE_ENV_FILE"] = "~/elsewhere"
+            self.assertEqual(config.env_file(), Path.home() / "elsewhere")
+
+    def test_environment_wins_and_missing_key_is_explained(self):
+        from decide import config
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {}, clear=True):
+            os.environ["DECIDE_ENV_FILE"] = str(Path(tmp) / "env")
+            with self.assertRaises(SystemExit) as e:
+                config.get_backend("jev")
+            self.assertIn("TYPESAFE_API_KEY", str(e.exception))
+            (Path(tmp) / "env").write_text("TYPESAFE_API_KEY=from-file\n")
+            os.environ["TYPESAFE_API_KEY"] = "from-env"
+            self.assertEqual(config.get_backend("jev").api_key, "from-env")
+            self.assertEqual(config.get_backend("ollama").api_key, None, "ollama needs no key")
+
+
 class ChunkTest(unittest.TestCase):
     def test_respects_limit_and_preserves_text(self):
         text = "".join(f"line {i}\n" for i in range(1000))

@@ -1,13 +1,15 @@
 # CLAUDE.md — decide
 
-CLI for asking System One decision models (Jev hosted, clef-flash via Ollama)
-typed questions about files and text. Stdlib-only Python; keep it that way.
+CLI and library for asking System One decision models (Jev hosted, clef-flash via
+Ollama) typed questions about files and text. Stdlib-only Python; keep it that way.
+User docs: `README.md`. Yamanote imports `decide.cache`, `decide.config` and
+`decide.engine`, so keep those APIs stable.
 
 ## Layout (`src/decide/`)
 
 | Module | Role |
 |---|---|
-| `config.py` | `Backend` dataclass + `BACKENDS` registry; loads `~/development/.env`. New backend = new entry. |
+| `config.py` | `Backend` dataclass + `BACKENDS` registry; reads keys from the environment, then `env_file()` (`$DECIDE_ENV_FILE` or `~/.config/decide/env`). New backend = new entry. |
 | `client.py` | POST `/v1/systemone`, bearer auth, retries on 429/5xx. |
 | `questions.py` | `noul` / `choice` / `score` builders; `combine()` merges one question's answers across chunks. |
 | `engine.py` | `Engine.run(documents, questions)`: chunk → parallel cached requests → combine. Reuse this for anything new. |

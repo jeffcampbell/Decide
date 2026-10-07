@@ -11,7 +11,15 @@ import os
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-DOTENV_PATHS = [Path.home() / "development" / ".env"]
+
+
+def env_file() -> Path:
+    """Where API keys can live when they aren't in the environment:
+    $DECIDE_ENV_FILE, else $XDG_CONFIG_HOME/decide/env (~/.config/decide/env)."""
+    if os.environ.get("DECIDE_ENV_FILE"):
+        return Path(os.environ["DECIDE_ENV_FILE"]).expanduser()
+    config = Path(os.environ.get("XDG_CONFIG_HOME") or Path.home() / ".config")
+    return config / "decide" / "env"
 
 
 @dataclass(frozen=True)
@@ -44,9 +52,9 @@ BACKENDS = {
 DEFAULT_BACKEND = "jev"
 
 
-def load_dotenv(paths=DOTENV_PATHS) -> None:
+def load_dotenv(paths: list[Path] | None = None) -> None:
     """Load KEY=VALUE lines into os.environ without overriding existing vars."""
-    for path in paths:
+    for path in paths if paths is not None else [env_file()]:
         if not path.is_file():
             continue
         for line in path.read_text().splitlines():
@@ -66,5 +74,6 @@ def get_backend(name: str | None = None, model: str | None = None) -> Backend:
     if model:
         backend = replace(backend, model=model)
     if backend.key_env and not backend.api_key:
-        raise SystemExit(f"decide: backend {name!r} needs ${backend.key_env} (env or ~/development/.env)")
+        raise SystemExit(f"decide: backend {name!r} needs ${backend.key_env}; set it in the environment "
+                         f"or in {env_file()}")
     return backend

@@ -23,7 +23,8 @@ def score(instructions: str, levels: list[str]) -> dict:
 
 
 def value(answer: dict) -> float | str:
-    """The headline value of one answer: P(yes), chosen option, or level."""
+    """The headline value of one answer: P(yes), the chosen option, or a
+    score question's 0-1 score."""
     return answer[answer["type"]]
 
 

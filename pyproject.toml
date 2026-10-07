@@ -6,8 +6,15 @@ build-backend = "setuptools.build_meta"
 name = "decide"
 version = "0.1.0"
 description = "Typed decisions about files and text via System One decision models (Jev, clef)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jeff Campbell" }]
 requires-python = ">=3.11"
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/jeffcampbell/Decide"
 
 [project.scripts]
 decide = "decide.cli:main"
