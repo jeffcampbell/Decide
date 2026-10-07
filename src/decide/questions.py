@@ -24,7 +24,7 @@ def score(instructions: str, levels: list[str]) -> dict:
 
 def value(answer: dict) -> float | str:
     """The headline value of one answer: P(yes), the chosen option, or a
-    score question's 0-1 score."""
+    score question's expected level index (0 = lowest level)."""
     return answer[answer["type"]]
 
 

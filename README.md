@@ -143,15 +143,16 @@ if result.error:
 print(value(result.answers["actionable"]))   # 0.85
 print(value(result.answers["area"]))         # "api"
 print(result.answers["area"]["probabilities"])        # {"api": 1.0, "ui": 0.0, ...}
-print(value(result.answers["difficulty"]))   # 0.86
+print(value(result.answers["difficulty"]))   # 0.86: between trivial (0) and small (1)
 print(result.answers["difficulty"]["probabilities"])  # {"0": 0.19, "1": 0.77, ...} by level
 ```
 
 - `noul` is a yes/no question; its value is P(yes).
 - `choice` picks one of 2–26 named options and returns a probability for each.
-- `score` places the input on an ordered scale of 2–26 levels, lowest first. Its value is a
-  0–1 score; `probabilities` gives each level's probability keyed by index, and
-  `legend` maps each index to its level name.
+- `score` places the input on an ordered scale of 2–26 levels, lowest first. Its value is the
+  expected level index, from 0 (lowest) to the number of levels minus 1;
+  `probabilities` gives each level's probability keyed by index, and `legend` maps
+  each index to its level name. Round the value to get the most likely level.
 - Up to 64 questions go in one request. `Engine.run` takes any number of documents,
   chunks and parallelises the requests, caches them, and merges the answers per
   document.
